@@ -1,6 +1,6 @@
 // Offline-Unterstützung: App-Dateien und Bibliotheken werden zwischengespeichert.
 // Bei jeder neuen Version VERSION hochzählen, damit iPhones die Änderungen laden.
-const VERSION = "umsatzbuch-v1";
+const VERSION = "umsatzbuch-v2";
 const SHELL = [
   "./", "./index.html", "./styles.css", "./config.js", "./manifest.webmanifest",
   "./js/app.js", "./js/domain.js", "./js/store.js", "./js/scanner.js", "./js/parser.js",

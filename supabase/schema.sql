@@ -36,14 +36,14 @@ alter table public.einstellungen enable row level security;
 drop policy if exists "eigene_zbons" on public.zbons;
 create policy "eigene_zbons" on public.zbons
   for all to authenticated
-  using (user_id = auth.uid())
-  with check (user_id = auth.uid());
+  using (user_id = (select auth.uid()))
+  with check (user_id = (select auth.uid()));
 
 drop policy if exists "eigene_einstellungen" on public.einstellungen;
 create policy "eigene_einstellungen" on public.einstellungen
   for all to authenticated
-  using (user_id = auth.uid())
-  with check (user_id = auth.uid());
+  using (user_id = (select auth.uid()))
+  with check (user_id = (select auth.uid()));
 
 -- Live-Abgleich zwischen Geräten
 do $$

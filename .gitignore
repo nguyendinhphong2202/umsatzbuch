@@ -6,3 +6,6 @@ testdaten/
 daten-import*.sql
 .DS_Store
 Thumbs.db
+
+# lokale Werkzeug-Einstellungen
+.claude/
