@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Umsatzbuch</title>
+<meta name="description" content="Tagesabschlüsse scannen, Umsatz pro Monat, Bar und Kredit.">
+<meta name="theme-color" content="#A8326A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Umsatzbuch">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Anmeldung -->
+<main class="login" id="login" hidden>
+  <div class="login-card">
+    <img src="icons/icon-192.png" alt="" width="64" height="64" class="login-icon">
+    <h1>Umsatzbuch</h1>
+    <p class="muted">Melde dich an, um deine Tagesabschlüsse zu sehen.</p>
+    <form id="loginForm" novalidate>
+      <label class="fld"><span>E-Mail</span><input id="lg-email" type="email" autocomplete="username" inputmode="email" required></label>
+      <label class="fld"><span>Passwort</span><input id="lg-pw" type="password" autocomplete="current-password" required></label>
+      <div class="status err" id="lg-err" hidden></div>
+      <button class="btn primary" id="lg-btn" type="submit">Anmelden</button>
+      <button class="linkbtn" id="lg-forgot" type="button">Passwort vergessen?</button>
+    </form>
+  </div>
+</main>
+
+<!-- App -->
+<div class="app" id="app" hidden>
+  <div class="top">
+    <div class="brand"><small>Tagesabschlüsse · Kasse</small><h1>Umsatzbuch</h1></div>
+    <div class="topright">
+      <div class="sync" id="sync"><i></i><span>Verbinde…</span></div>
+      <button class="iconbtn small" id="menuBtn" aria-label="Einstellungen">⋯</button>
+    </div>
+  </div>
+
+  <div class="monthbar">
+    <button class="iconbtn" id="prevM" aria-label="Vorheriger Monat">‹</button>
+    <h2 id="mTitle">–</h2>
+    <button class="iconbtn" id="nextM" aria-label="Nächster Monat">›</button>
+  </div>
+
+  <div id="banner" hidden></div>
+
+  <div class="hero">
+    <div class="total">
+      <div><div class="label">Umsatz brutto</div><div class="big" id="tot">0,00 €</div></div>
+      <div class="muted totsub" id="totSub"></div>
+    </div>
+    <div id="goalBox"></div>
+    <div class="split">
+      <div class="splitbar" id="splitbar" aria-hidden="true"></div>
+      <div class="legend">
+        <div class="leg cash"><div class="k"><i></i>Bar</div><div class="v" id="barV">0,00 €</div><div class="s" id="barS">–</div></div>
+        <div class="leg card"><div class="k"><i></i>Kredit / Karte</div><div class="v" id="krV">0,00 €</div><div class="s" id="krS">–</div></div>
+      </div>
+      <div class="unknote" id="unk" hidden></div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><span class="label">Tage</span><span class="v" id="sTage">0</span></div>
+    <div class="stat"><span class="label">Ø pro Tag</span><span class="v" id="sAvg">–</span></div>
+    <div class="stat"><span class="label">Kunden</span><span class="v" id="sKunden">–</span></div>
+    <div class="stat"><span class="label">Ø pro Kunde</span><span class="v" id="sBon">–</span></div>
+    <div class="stat"><span class="label">Netto</span><span class="v" id="sNetto">–</span></div>
+    <div class="stat"><span class="label">MwSt</span><span class="v" id="sMwst">–</span></div>
+    <div class="stat"><span class="label">Stornos</span><span class="v" id="sStorno">–</span></div>
+    <div class="stat"><span class="label">Bester Tag</span><span class="v" id="sBest">–</span></div>
+  </div>
+
+  <section>
+    <div class="sechead"><h3>Umsatz pro Tag</h3><span class="muted note" id="chartNote"></span></div>
+    <div class="chartbox">
+      <svg id="chart" viewBox="0 0 340 170" role="img" aria-label="Tagesumsätze im Monat"></svg>
+      <div class="chartlegend"><span><i class="c-cash"></i>Bar</span><span><i class="c-card"></i>Kredit</span><span><i class="c-unk"></i>nicht aufgeteilt</span></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sechead"><h3>Tagesabschlüsse</h3><span class="muted note" id="listNote"></span></div>
+    <div id="list"></div>
+  </section>
+
+  <section>
+    <div class="sechead"><h3 id="yTitle">Jahr</h3><span class="muted note" id="ySum"></span></div>
+    <div class="year" id="year"></div>
+  </section>
+
+  <section>
+    <div class="tools">
+      <button class="btn" id="csvBtn">CSV für den Monat</button>
+      <button class="btn" id="goalBtn2">Monatsziel ändern</button>
+    </div>
+  </section>
+</div>
+
+<div class="dock" id="dock" hidden><div class="in">
+  <button class="btn" id="manualBtn">Manuell</button>
+  <button class="btn primary" id="scanBtn">Bon scannen</button>
+</div></div>
+
+<!-- Scanner (Vollbild) -->
+<div class="scanner" id="scanner" hidden>
+  <video playsinline muted autoplay></video>
+  <div class="sc-top">
+    <button class="sc-close" aria-label="Scanner schließen">×</button>
+    <span class="sc-title">Bon in den Rahmen halten</span>
+    <span class="sc-spacer"></span>
+  </div>
+  <div class="frame" aria-hidden="true"><span></span></div>
+  <div class="sc-bottom">
+    <div class="sc-meter"><i></i></div>
+    <div class="sc-hint">Kamera wird gestartet …</div>
+    <div class="sc-row">
+      <label class="sc-pick" for="sc-file">Bild wählen</label>
+      <button class="sc-shutter" aria-label="Jetzt aufnehmen"></button>
+      <span class="sc-spacer2"></span>
+    </div>
+  </div>
+  <input type="file" id="sc-file" accept="image/*" class="vh" aria-label="Bild vom Bon wählen">
+</div>
+
+<!-- Dialogblatt -->
+<div class="veil" id="veil" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="shTitle">
+    <header><h3 id="shTitle">Tagesabschluss</h3><button class="iconbtn" id="shClose" aria-label="Schließen">×</button></header>
+    <div class="body" id="shBody"></div>
+    <footer id="shFoot"></footer>
+  </div>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script src="config.js"></script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

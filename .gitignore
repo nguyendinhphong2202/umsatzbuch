@@ -1,0 +1,8 @@
+# Testbilder und persönliche Daten nie veröffentlichen
+testdaten/
+*.jpg
+*.jpeg
+*.heic
+daten-import*.sql
+.DS_Store
+Thumbs.db
